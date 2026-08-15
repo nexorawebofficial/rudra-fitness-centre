@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Pricing - RUDRA Fitness Centre{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Membership Plans</h1>
+</section>
+<section class="content-section">
+    {% if plans %}
+    <div class="card-grid">
+        {% for plan in plans %}
+        <div class="card {% if plan.is_popular %}popular{% endif %}">
+            {% if plan.is_popular %}<span class="badge">Most Popular</span>{% endif %}
+            <h3>{{ plan.name }}</h3>
+            <p class="price">₹{{ plan.price }}<span>{% if plan.duration_days > 0 %}/{{ plan.duration_days }} days{% else %}one-time{% endif %}</span></p>
+            <ul class="feature-list">
+                {% for feature in plan.feature_list %}
+                <li>{{ feature }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'contact' %}" class="btn-primary">Join Now</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Membership plans coming soon!</p>
+    {% endif %}
+</section>
+{% endblock %}

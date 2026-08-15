@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Contact - RUDRA Fitness Centre{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Contact Us</h1>
+</section>
+<section class="content-section contact-section">
+    <div class="contact-info">
+        <h3>Get in Touch</h3>
+        <p>Sakaldhia-Mugalsarai Highway, Tarajivanpur</p>
+        <p>+91 9118940464</p>
+        <p>+91 9170169747</p>
+        <p>info@rudrafitness.com</p>
+        <p>Mon - Sat: 6:00 AM - 10:00 PM</p>
+        <p>Owner: Prashant Misra</p>
+    </div>
+    <form method="post" class="contact-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn-primary">Send Message</button>
+    </form>
+</section>
+{% endblock %}

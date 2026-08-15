@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Trainers - RUDRA Fitness Centre{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Meet Our Trainers</h1>
+</section>
+<section class="content-section">
+    {% if trainers %}
+    <div class="card-grid">
+        {% for trainer in trainers %}
+        <div class="card">
+            {% if trainer.photo %}
+            <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="trainer-photo">
+            {% endif %}
+            <h3>{{ trainer.name }}</h3>
+            <p class="muted">{{ trainer.specialization }}</p>
+            <p>{{ trainer.experience_years }} years experience</p>
+            {% if trainer.phone %}<p>Contact: {{ trainer.phone }}</p>{% endif %}
+            {% if trainer.bio %}<p>{{ trainer.bio }}</p>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Trainer profiles coming soon!</p>
+    {% endif %}
+</section>
+{% endblock %}

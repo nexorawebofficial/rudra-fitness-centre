@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}RUDRA Fitness Centre - Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <svg class="hero-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+            <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+            <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
+            <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+            <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+        </svg>
+        <h1>Transform Your Body.<br>Transform Your Life.</h1>
+        <p>Join RUDRA Fitness Centre and get access to expert trainers, modern equipment, and a community that keeps you motivated.</p>
+        <a href="{% url 'pricing' %}" class="btn-primary">Get Started</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h3>Modern Equipment</h3>
+        <p>State-of-the-art machines and free weights for every fitness level.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Expert Trainers</h3>
+        <p>Certified trainers to guide and push you toward your goals.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Flexible Classes</h3>
+        <p>From yoga to HIIT, find a class that fits your schedule.</p>
+    </div>
+</section>
+
+{% if trainers %}
+<section class="preview-section">
+    <h2>Meet Our Trainers</h2>
+    <div class="card-grid">
+        {% for trainer in trainers %}
+        <div class="card">
+            <h3>{{ trainer.name }}</h3>
+            <p class="muted">{{ trainer.specialization }}</p>
+            <p>{{ trainer.experience_years }} years experience</p>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'trainers' %}" class="btn-secondary">View All Trainers</a>
+</section>
+{% endif %}
+
+{% if plans %}
+<section class="preview-section alt">
+    <h2>Membership Plans</h2>
+    <div class="card-grid">
+        {% for plan in plans %}
+        <div class="card {% if plan.is_popular %}popular{% endif %}">
+            <h3>{{ plan.name }}</h3>
+            <p class="price">₹{{ plan.price }}</p>
+            <p class="muted">{% if plan.duration_days > 0 %}{{ plan.duration_days }} days{% else %}One-time{% endif %}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'pricing' %}" class="btn-secondary">View All Plans</a>
+</section>
+{% endif %}
+{% endblock %}
