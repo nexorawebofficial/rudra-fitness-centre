@@ -27,3 +27,7 @@ if not MembershipPlan.objects.filter(name='1 Month Plan').exists():
 if not MembershipPlan.objects.filter(name='3 Month Plan').exists():
     MembershipPlan.objects.create(name='3 Month Plan', price=1200, duration_days=90, benefits='Full gym access\nLocker facility\nFree fitness assessment\nBest value - save vs monthly', is_popular=True, display_order=2)
 "
+
+python manage.py seed_diet_plans
+python manage.py seed_faqs
+python manage.py seed_testimonials
