@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}Membership Card - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Digital Membership Card</h1>
+</section>
+<section class="content-section">
+    <div class="membership-card">
+        <div class="membership-card-top">
+            <div class="membership-card-brand">
+                <svg class="logo-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                    <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                    <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
+                    <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                    <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                </svg>
+                <span>{{ site_settings.site_title }}</span>
+            </div>
+            {% if membership %}
+            <span class="status-pill {{ membership.status }}">{{ membership.get_status_display }}</span>
+            {% endif %}
+        </div>
+
+        <div class="membership-card-body">
+            <div class="membership-card-info">
+                <p class="membership-card-name">{{ profile.full_name }}</p>
+                <p class="membership-card-id">{{ profile.member_id }}</p>
+                {% if membership %}
+                <p class="membership-card-plan">{{ membership.plan.name }}</p>
+                <div class="membership-card-dates">
+                    <div><span>Start</span>{{ membership.start_date|default:"-" }}</div>
+                    <div><span>Expiry</span>{{ membership.end_date|default:"-" }}</div>
+                </div>
+                {% else %}
+                <p class="muted">No active membership plan.</p>
+                {% endif %}
+            </div>
+            <div class="membership-card-qr">
+                <img src="{% url 'membership_card_qr' %}" alt="Check-in QR code">
+                <span>Scan at front desk</span>
+            </div>
+        </div>
+    </div>
+    <p class="muted" style="text-align:center; margin-top: 1.5rem;">
+        {% icon 'qr' 'icon-inline' %} Front-desk staff scan this QR code to record your attendance.
+    </p>
+</section>
+{% endblock %}

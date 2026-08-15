@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Pricing - RUDRA Fitness Centre{% endblock %}
+{% load icons %}
+{% block title %}Membership Plans - {{ site_settings.site_title }}{% endblock %}
 {% block content %}
 <section class="page-header">
     <h1>Membership Plans</h1>
@@ -11,13 +12,13 @@
         <div class="card {% if plan.is_popular %}popular{% endif %}">
             {% if plan.is_popular %}<span class="badge">Most Popular</span>{% endif %}
             <h3>{{ plan.name }}</h3>
-            <p class="price">₹{{ plan.price }}<span>{% if plan.duration_days > 0 %}/{{ plan.duration_days }} days{% else %}one-time{% endif %}</span></p>
+            <p class="price">&#8377;{{ plan.price|floatformat:"-2" }}<span>{% if plan.duration_days > 0 %}/{{ plan.duration_days }} days{% else %}one-time{% endif %}</span></p>
             <ul class="feature-list">
-                {% for feature in plan.feature_list %}
-                <li>{{ feature }}</li>
+                {% for benefit in plan.benefit_list %}
+                <li>{% icon 'check' 'icon icon-inline' %} {{ benefit }}</li>
                 {% endfor %}
             </ul>
-            <a href="{% url 'contact' %}" class="btn-primary">Join Now</a>
+            <a href="{% url 'contact' %}" class="btn-primary">{% icon 'dumbbell' %} Join Now</a>
         </div>
         {% endfor %}
     </div>

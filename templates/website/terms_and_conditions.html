@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Terms & Conditions - RUDRA Fitness Centre{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Terms &amp; Conditions</h1>
+</section>
+<section class="content-section legal-text">
+    {% if site_settings.terms_and_conditions %}
+        {{ site_settings.terms_and_conditions|linebreaks }}
+    {% else %}
+        <p class="empty-state">Terms and conditions will be published here shortly. Contact us if you have questions.</p>
+    {% endif %}
+</section>
+{% endblock %}

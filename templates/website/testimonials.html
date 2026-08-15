@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}Testimonials - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Member Testimonials</h1>
+</section>
+<section class="content-section">
+    {% if testimonials %}
+    <div class="testimonial-grid">
+        {% for t in testimonials %}
+        <div class="testimonial-card">
+            <div class="stars">
+                {% for i in "12345" %}{% if forloop.counter <= t.rating %}{% icon 'star' %}{% endif %}{% endfor %}
+            </div>
+            <blockquote>&ldquo;{{ t.quote }}&rdquo;</blockquote>
+            <div class="testimonial-author">
+                {% if t.member_photo %}<img src="{{ t.member_photo.url }}" alt="{{ t.member_name }}">{% endif %}
+                <span>{{ t.member_name }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Member testimonials coming soon!</p>
+    {% endif %}
+</section>
+{% endblock %}

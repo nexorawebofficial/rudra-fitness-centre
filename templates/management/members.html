@@ -1,0 +1,70 @@
+{% extends 'management/base.html' %}
+{% block title %}Members{% endblock %}
+{% block page_title %}Members{% endblock %}
+{% block content %}
+
+<form method="get" class="filter-bar">
+    <div class="form-group">
+        <label for="q">Search</label>
+        <input type="text" id="q" name="q" value="{{ query }}" placeholder="Name, phone, email or Member ID">
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+            <option value="">All</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="plan">Plan</label>
+        <select id="plan" name="plan">
+            <option value="">All</option>
+            {% for plan in plans %}
+            <option value="{{ plan.id }}" {% if plan_id == plan.id|stringformat:"s" %}selected{% endif %}>{{ plan.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn-primary">Filter</button>
+    <a href="{% url 'management:members' %}" class="btn-secondary">Reset</a>
+</form>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
+            <tr><th>Member ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Status</th><th>Joined</th></tr>
+        </thead>
+        <tbody>
+            {% for member in page_obj %}
+            <tr>
+                <td><a href="{% url 'management:member_detail' member_id=member.member_id %}">{{ member.member_id }}</a></td>
+                <td>{{ member.full_name }}</td>
+                <td>{{ member.user.phone_number|default:"-" }}</td>
+                <td>{{ member.user.email }}</td>
+                <td>
+                    {% with membership=member.memberships.first %}
+                    {% if membership %}
+                        <span class="status-pill {{ membership.status }}">{{ membership.get_status_display }}</span>
+                    {% else %}
+                        <span class="status-pill pending">No Membership</span>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+                <td>{{ member.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No members found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="pagination">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&status={{ status }}&plan={{ plan_id }}">Prev</a>{% endif %}
+    <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ query }}&status={{ status }}&plan={{ plan_id }}">Next</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'management/base.html' %}
+{% load icons %}
+{% block title %}{{ profile.full_name }}{% endblock %}
+{% block page_title %}{{ profile.full_name }}{% endblock %}
+{% block content %}
+
+<div class="detail-grid">
+    <div class="panel">
+        <h3>{% icon 'members' %} Profile</h3>
+        <p><strong>Member ID:</strong> {{ profile.member_id }}</p>
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+        <p><strong>Phone:</strong> {{ profile.user.phone_number|default:"-" }}</p>
+        <p><strong>Gender:</strong> {{ profile.get_gender_display }}</p>
+        <p><strong>Date of Birth:</strong> {{ profile.date_of_birth|default:"-" }}</p>
+        <p><strong>Emergency Contact:</strong> {{ profile.emergency_contact_name }} ({{ profile.emergency_contact_phone }})</p>
+        <p><strong>Preferred Time:</strong> {{ profile.get_preferred_training_time_display|default:"-" }}</p>
+        <p><strong>Fitness Goal:</strong> {{ profile.fitness_goal|default:"-" }}</p>
+        <p><strong>Account Status:</strong> <span class="status-pill {% if profile.is_active %}active{% else %}expired{% endif %}">{{ profile.is_active|yesno:"Active,Deactivated" }}</span></p>
+        <form method="post" action="{% url 'management:toggle_member_active' member_id=profile.member_id %}" style="margin-top:1rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">{% if profile.is_active %}Deactivate Member{% else %}Reactivate Member{% endif %}</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h3>{% icon 'shield-check' %} Memberships</h3>
+        {% for m in memberships %}
+        <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--color-border);">
+            <p><strong>{{ m.plan.name }}</strong> &mdash; <span class="status-pill {{ m.status }}">{{ m.get_status_display }}</span></p>
+            {% if m.start_date %}<p class="muted">{{ m.start_date }} &rarr; {{ m.end_date }}</p>{% endif %}
+            {% if m.status == 'active' or m.status == 'pending' %}
+            <form method="post" action="{% url 'management:extend_membership' membership_id=m.id %}" class="inline-form">
+                {% csrf_token %}
+                <input type="number" name="days" min="1" placeholder="Days" required>
+                <button type="submit" class="btn-secondary">Extend / Activate</button>
+            </form>
+            <form method="post" action="{% url 'management:cancel_membership' membership_id=m.id %}" style="margin-top:0.5rem;">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger">Cancel Membership</button>
+            </form>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="muted">No memberships yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="panel-grid">
+    <div class="panel">
+        <h3>{% icon 'card' %} Payment History</h3>
+        {% if payments %}
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Order ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                {% for p in payments %}
+                <tr><td>{{ p.razorpay_order_id }}</td><td>&#8377;{{ p.amount|floatformat:"-2" }}</td><td>{{ p.get_status_display }}</td><td>{{ p.created_at|date:"d M Y" }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No payments recorded yet.</p>
+        {% endif %}
+    </div>
+    <div class="panel">
+        <h3>{% icon 'qr' %} Recent Attendance</h3>
+        {% if attendance_records %}
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Date</th><th>Method</th></tr></thead>
+                <tbody>
+                {% for a in attendance_records %}
+                <tr><td>{{ a.check_in_time|date:"d M Y, h:i A" }}</td><td>{{ a.get_method_display }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No attendance recorded yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

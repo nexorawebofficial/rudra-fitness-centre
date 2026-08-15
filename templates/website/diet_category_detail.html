@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}{{ category.name }} - Diet & Nutrition - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <p class="muted"><a href="{% url 'diet_nutrition' %}">&larr; Diet &amp; Nutrition</a></p>
+    <h1>{{ category.name }}</h1>
+</section>
+<section class="content-section">
+    {% if category.description %}<p>{{ category.description }}</p>{% endif %}
+
+    <div class="disclaimer-box">
+        {% icon 'shield-check' %}
+        <strong>Disclaimer:</strong> This is general nutrition guidance, not medical advice. Consult a qualified
+        doctor or registered dietitian for advice specific to your health.
+    </div>
+
+    {% if plans %}
+    <div class="card-grid">
+        {% for plan in plans %}
+        <a href="{% url 'diet_plan_detail' pk=plan.pk %}" class="card diet-category-card">
+            <h3>{{ plan.title }}</h3>
+            <p class="muted">View full plan &rarr;</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No plans published in this category yet. Ask your trainer for personalized guidance.</p>
+    {% endif %}
+</section>
+{% endblock %}

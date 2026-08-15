@@ -1,33 +1,97 @@
 {% extends 'base.html' %}
-{% block title %}RUDRA Fitness Centre - Home{% endblock %}
+{% load icons %}
+{% block title %}{{ site_settings.site_title }} - {{ site_settings.tagline }}{% endblock %}
 {% block content %}
-<section class="hero">
+
+<section class="hero {% if site_settings.hero_image %}has-image{% endif %}"
+    {% if site_settings.hero_image %}style="background-image: url('{{ site_settings.hero_image.url }}');"{% endif %}>
     <div class="hero-content">
-        <svg class="hero-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
-            <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
-            <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
-            <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
-            <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
-        </svg>
-        <h1>Transform Your Body.<br>Transform Your Life.</h1>
-        <p>Join RUDRA Fitness Centre and get access to expert trainers, modern equipment, and a community that keeps you motivated.</p>
-        <a href="{% url 'pricing' %}" class="btn-primary">Get Started</a>
+        <p class="eyebrow">Premium Gym for Men &amp; Women</p>
+        <h1>{{ site_settings.site_title|default:"RUDRA FITNESS" }}</h1>
+        <p class="hero-tagline">{{ site_settings.tagline }}</p>
+        <div class="hero-actions">
+            <a href="{% url 'pricing' %}" class="btn-primary">{% icon 'dumbbell' %} Join Now</a>
+            <a href="{% url 'pricing' %}" class="btn-secondary">{% icon 'card' %} View Memberships</a>
+            <a href="{% url 'contact' %}" class="btn-ghost">{% icon 'phone' %} Contact Us</a>
+        </div>
     </div>
 </section>
 
-<section class="features">
-    <div class="feature-card">
-        <h3>Modern Equipment</h3>
-        <p>State-of-the-art machines and free weights for every fitness level.</p>
+<section class="stats-bar">
+    <div class="stat-item">
+        <span class="stat-number" data-counter="{{ site_settings.members_count }}">{{ site_settings.members_count }}</span>
+        <p class="stat-label">Members</p>
     </div>
-    <div class="feature-card">
-        <h3>Expert Trainers</h3>
-        <p>Certified trainers to guide and push you toward your goals.</p>
+    <div class="stat-item">
+        <span class="stat-number" data-counter="{{ site_settings.trainers_count }}">{{ site_settings.trainers_count }}</span>
+        <p class="stat-label">Trainers</p>
     </div>
-    <div class="feature-card">
-        <h3>Flexible Classes</h3>
-        <p>From yoga to HIIT, find a class that fits your schedule.</p>
+    <div class="stat-item">
+        <span class="stat-number" data-counter="{{ site_settings.years_experience }}">{{ site_settings.years_experience }}</span>
+        <p class="stat-label">Years Experience</p>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number" data-counter="{{ site_settings.programs_count }}">{{ site_settings.programs_count }}</span>
+        <p class="stat-label">Programs</p>
+    </div>
+</section>
+
+{% if site_settings.todays_motivation or site_settings.workout_of_the_day %}
+<section class="motivation-banner">
+    {% if site_settings.todays_motivation %}
+    <div class="motivation-card">
+        <h4>{% icon 'trophy' %} Today's Motivation</h4>
+        <p>{{ site_settings.todays_motivation }}</p>
+    </div>
+    {% endif %}
+    {% if site_settings.workout_of_the_day %}
+    <div class="motivation-card">
+        <h4>{% icon 'dumbbell' %} Workout of the Day</h4>
+        <p>{{ site_settings.workout_of_the_day }}</p>
+    </div>
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="why-section">
+    <h2>{{ site_settings.home_intro_heading }}</h2>
+    <p>{{ site_settings.home_intro_text }}</p>
+    <div class="why-grid">
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'members' %}</div>
+            <h3>Male &amp; Female Training</h3>
+            <p>A welcoming space designed for every member, regardless of gender or experience level.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'trophy' %}</div>
+            <h3>Professional Trainers</h3>
+            <p>Certified coaches who build programs around your goals, not generic routines.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'dumbbell' %}</div>
+            <h3>Modern Equipment</h3>
+            <p>Well-maintained cardio, strength and free-weight equipment for every training style.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'check' %}</div>
+            <h3>Personalized Plans</h3>
+            <p>Training and nutrition guidance tailored to your body, schedule and fitness goals.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'card' %}</div>
+            <h3>Flexible Memberships</h3>
+            <p>Simple, transparent plans with no hidden fees &mdash; upgrade, renew or pause any time.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'apple' %}</div>
+            <h3>Diet Guidance</h3>
+            <p>General nutrition categories and guidance to support your training, not fad diets.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon-badge">{% icon 'shield-check' %}</div>
+            <h3>Clean &amp; Safe Environment</h3>
+            <p>Hygienic facilities and a safety-first culture so you can focus on your workout.</p>
+        </div>
     </div>
 </section>
 
@@ -37,8 +101,9 @@
     <div class="card-grid">
         {% for trainer in trainers %}
         <div class="card">
+            {% if trainer.photo %}<img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" loading="lazy" class="trainer-photo">{% endif %}
             <h3>{{ trainer.name }}</h3>
-            <p class="muted">{{ trainer.specialization }}</p>
+            <p class="muted">{{ trainer.specialty }}</p>
             <p>{{ trainer.experience_years }} years experience</p>
         </div>
         {% endfor %}
@@ -53,13 +118,52 @@
     <div class="card-grid">
         {% for plan in plans %}
         <div class="card {% if plan.is_popular %}popular{% endif %}">
+            {% if plan.is_popular %}<span class="badge">Most Popular</span>{% endif %}
             <h3>{{ plan.name }}</h3>
-            <p class="price">₹{{ plan.price }}</p>
-            <p class="muted">{% if plan.duration_days > 0 %}{{ plan.duration_days }} days{% else %}One-time{% endif %}</p>
+            <p class="price">&#8377;{{ plan.price|floatformat:"-2" }}<span>{% if plan.duration_days > 0 %}/{{ plan.duration_days }} days{% else %}one-time{% endif %}</span></p>
+            <a href="{% url 'pricing' %}" class="btn-primary">Join Now</a>
         </div>
         {% endfor %}
     </div>
     <a href="{% url 'pricing' %}" class="btn-secondary">View All Plans</a>
 </section>
 {% endif %}
+
+{% if gallery %}
+<section class="preview-section">
+    <h2>Inside RUDRA FITNESS</h2>
+    <div class="gallery-grid">
+        {% for image in gallery %}
+        <a href="{% url 'gallery' %}"><img src="{{ image.image.url }}" alt="{{ image.caption }}" loading="lazy" class="gallery-photo"></a>
+        {% endfor %}
+    </div>
+    <a href="{% url 'gallery' %}" class="btn-secondary">View Full Gallery</a>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section class="preview-section alt">
+    <h2>What Our Members Say</h2>
+    <div class="testimonial-grid">
+        {% for t in testimonials %}
+        <div class="testimonial-card">
+            <div class="stars">
+                {% for i in "12345" %}{% if forloop.counter <= t.rating %}{% icon 'star' %}{% endif %}{% endfor %}
+            </div>
+            <blockquote>&ldquo;{{ t.quote }}&rdquo;</blockquote>
+            <div class="testimonial-author">
+                {% if t.member_photo %}<img src="{{ t.member_photo.url }}" alt="{{ t.member_name }}">{% endif %}
+                <span>{{ t.member_name }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="cta-banner">
+    <h2>Ready to Start Your Fitness Journey?</h2>
+    <a href="{% url 'pricing' %}" class="btn-primary btn-lg">JOIN RUDRA FITNESS</a>
+</section>
+
 {% endblock %}

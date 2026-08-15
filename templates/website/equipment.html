@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Equipment - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Our Equipment</h1>
+</section>
+<section class="content-section">
+    {% if equipment_list %}
+    <div class="card-grid">
+        {% for item in equipment_list %}
+        <div class="card">
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" class="trainer-photo">
+            {% endif %}
+            <h3>{{ item.name }}</h3>
+            <p class="muted">{{ item.get_category_display }}</p>
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Equipment listing coming soon. Visit us to see our full range of cardio, strength and free-weight equipment.</p>
+    {% endif %}
+</section>
+{% endblock %}

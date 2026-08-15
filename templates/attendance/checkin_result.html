@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}Check-in - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="content-section checkin-result">
+    <div class="status-card {% if success %}{% if already %}status-pending{% else %}status-active{% endif %}{% else %}status-expired{% endif %}">
+        <h2>
+            {% if success %}{% icon 'shield-check' %}{% else %}{% icon 'clock' %}{% endif %}
+            {% if success %}{% if already %}Already Checked In{% else %}Checked In{% endif %}{% else %}Check-in Failed{% endif %}
+        </h2>
+        <p>{{ message }}</p>
+        {% if profile %}<p class="muted">Member ID: {{ profile.member_id }}</p>{% endif %}
+    </div>
+</section>
+{% endblock %}

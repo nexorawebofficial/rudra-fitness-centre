@@ -1,0 +1,75 @@
+{% load static icons %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - RUDRA FITNESS Admin</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+    <link rel="icon" href="{% static 'icons/icon-192.png' %}">
+</head>
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-brand">
+                <svg class="logo-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                    <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                    <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
+                    <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                    <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                </svg>
+                <span>RUDRA <em>Admin</em></span>
+            </div>
+            <nav class="admin-nav">
+                <a href="{% url 'management:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">{% icon 'trophy' %} Dashboard</a>
+                <a href="{% url 'management:members' %}" class="{% if request.resolver_match.url_name == 'members' or request.resolver_match.url_name == 'member_detail' %}active{% endif %}">{% icon 'members' %} Members</a>
+                <a href="{% url 'management:attendance' %}" class="{% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">{% icon 'qr' %} Attendance</a>
+                <a href="{% url 'management:enquiries' %}" class="{% if request.resolver_match.url_name == 'enquiries' %}active{% endif %}">{% icon 'mail' %} Enquiries</a>
+                <div class="admin-nav-divider">Content (Django Admin)</div>
+                <a href="{% url 'admin:memberships_membershipplan_changelist' %}">{% icon 'card' %} Membership Plans</a>
+                <a href="{% url 'admin:payments_payment_changelist' %}">{% icon 'card' %} Payments</a>
+                <a href="{% url 'admin:trainers_trainer_changelist' %}">{% icon 'dumbbell' %} Trainers</a>
+                <a href="{% url 'admin:diets_dietplan_changelist' %}">{% icon 'diet' %} Diet Plans</a>
+                <a href="{% url 'admin:website_galleryimage_changelist' %}">{% icon 'star' %} Gallery</a>
+                <a href="{% url 'admin:website_testimonial_changelist' %}">{% icon 'star' %} Testimonials</a>
+                <a href="{% url 'admin:website_faq_changelist' %}">{% icon 'check' %} FAQs</a>
+                <a href="{% url 'admin:website_websitesettings_change' object_id=1 %}">{% icon 'shield-check' %} Website Settings</a>
+                <a href="{% url 'admin:notifications_notification_changelist' %}">{% icon 'calendar' %} Notifications</a>
+                <div class="admin-nav-divider"></div>
+                <a href="{% url 'home' %}" target="_blank">{% icon 'location' %} View Public Site</a>
+                <a href="{% url 'admin:index' %}">{% icon 'shield-check' %} Full Django Admin</a>
+            </nav>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Toggle menu">&#9776;</button>
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-secondary">Logout</button>
+                </form>
+            </header>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <main class="admin-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script>
+        document.getElementById('adminMenuToggle').addEventListener('click', function () {
+            document.getElementById('adminSidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

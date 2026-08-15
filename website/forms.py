@@ -1,11 +1,11 @@
 from django import forms
 
-from .models import ContactMessage
+from .models import Enquiry
 
 
-class ContactForm(forms.ModelForm):
+class EnquiryForm(forms.ModelForm):
     class Meta:
-        model = ContactMessage
+        model = Enquiry
         fields = ['name', 'email', 'phone', 'message']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Your name'}),

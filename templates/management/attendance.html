@@ -1,0 +1,43 @@
+{% extends 'management/base.html' %}
+{% load icons %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+
+<div class="panel" style="margin-bottom: 1.5rem;">
+    <h3>{% icon 'qr' %} Record Manual Check-in</h3>
+    <form method="post" action="{% url 'management:record_manual_attendance' %}" class="inline-form">
+        {% csrf_token %}
+        <input type="text" name="member_id" placeholder="Member ID (e.g. RF-2026-1234)" required>
+        <button type="submit" class="btn-primary">Check In</button>
+    </form>
+    <p class="field-hint">Duplicate check-ins within 4 hours are automatically blocked.</p>
+</div>
+
+<form method="get" class="filter-bar">
+    <div class="form-group">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+    </div>
+    <button type="submit" class="btn-primary">View</button>
+    <a href="{% url 'management:attendance' %}" class="btn-secondary">Today</a>
+</form>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Member</th><th>Member ID</th><th>Time</th><th>Method</th></tr></thead>
+        <tbody>
+        {% for record in records %}
+        <tr>
+            <td><a href="{% url 'management:member_detail' member_id=record.member.member_id %}">{{ record.member.full_name }}</a></td>
+            <td>{{ record.member.member_id }}</td>
+            <td>{{ record.check_in_time|date:"h:i A" }}</td>
+            <td>{{ record.get_method_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No attendance recorded for {{ selected_date }}.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

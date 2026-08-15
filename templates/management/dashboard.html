@@ -1,0 +1,146 @@
+{% extends 'management/base.html' %}
+{% load icons %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="stat-cards">
+    <div class="stat-card accent">
+        <div class="icon-badge">{% icon 'members' %}</div>
+        <div><div class="stat-card-value">{{ total_members }}</div><div class="stat-card-label">Total Members</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'shield-check' %}</div>
+        <div><div class="stat-card-value">{{ active_memberships }}</div><div class="stat-card-label">Active Memberships</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'clock' %}</div>
+        <div><div class="stat-card-value">{{ expired_memberships }}</div><div class="stat-card-label">Expired Memberships</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'members' %}</div>
+        <div><div class="stat-card-value">{{ new_registrations_today }}</div><div class="stat-card-label">New Registrations Today</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'card' %}</div>
+        <div><div class="stat-card-value">{{ todays_payments }}</div><div class="stat-card-label">Today's Payments</div></div>
+    </div>
+    <div class="stat-card accent">
+        <div class="icon-badge">{% icon 'card' %}</div>
+        <div><div class="stat-card-value">&#8377;{{ total_revenue|floatformat:"-2" }}</div><div class="stat-card-label">Total Revenue</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'renew' %}</div>
+        <div><div class="stat-card-value">{{ renewals }}</div><div class="stat-card-label">Membership Renewals</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'qr' %}</div>
+        <div><div class="stat-card-value">{{ attendance_today }}</div><div class="stat-card-label">Today's Attendance</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-badge">{% icon 'mail' %}</div>
+        <div><div class="stat-card-value">{{ open_enquiries }}</div><div class="stat-card-label">Open Enquiries</div></div>
+    </div>
+</div>
+
+<div class="panel-grid">
+    <div class="panel">
+        <h3>{% icon 'members' %} Membership Growth (6 months)</h3>
+        <div class="chart-bars">
+            {% for item in growth_chart %}
+            <div class="chart-bar-wrap">
+                <span class="chart-bar-value">{{ item.value }}</span>
+                <div class="chart-bar" style="height: {% widthratio item.value growth_max 100 %}%;"></div>
+                <span class="chart-bar-label">{{ item.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <h3>{% icon 'card' %} Revenue (6 months)</h3>
+        <div class="chart-bars">
+            {% for item in revenue_chart %}
+            <div class="chart-bar-wrap">
+                <span class="chart-bar-value">&#8377;{{ item.value }}</span>
+                <div class="chart-bar" style="height: {% widthratio item.value revenue_max 100 %}%;"></div>
+                <span class="chart-bar-label">{{ item.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <h3>{% icon 'qr' %} Attendance (7 days)</h3>
+        <div class="chart-bars">
+            {% for item in attendance_chart %}
+            <div class="chart-bar-wrap">
+                <span class="chart-bar-value">{{ item.value }}</span>
+                <div class="chart-bar" style="height: {% widthratio item.value attendance_max 100 %}%;"></div>
+                <span class="chart-bar-label">{{ item.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <h3>{% icon 'trophy' %} Membership Plan Popularity</h3>
+        {% if plan_popularity %}
+        <div class="plan-popularity-list">
+            {% for plan in plan_popularity %}
+            <div class="plan-popularity-row">
+                <span class="plan-name">{{ plan.name }}</span>
+                <div class="plan-popularity-track"><div class="plan-popularity-fill" style="width: {% widthratio plan.member_count plan_popularity_max 100 %}%;"></div></div>
+                <span class="plan-popularity-count">{{ plan.member_count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted">No membership plans yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel-grid">
+    <div class="panel">
+        <h3>{% icon 'members' %} Recent Registrations</h3>
+        {% if recent_registrations %}
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Member</th><th>Member ID</th><th>Joined</th></tr></thead>
+                <tbody>
+                {% for m in recent_registrations %}
+                <tr>
+                    <td><a href="{% url 'management:member_detail' member_id=m.member_id %}">{{ m.full_name }}</a></td>
+                    <td>{{ m.member_id }}</td>
+                    <td>{{ m.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No registrations yet.</p>
+        {% endif %}
+    </div>
+    <div class="panel">
+        <h3>{% icon 'mail' %} Recent Enquiries</h3>
+        {% if recent_enquiries %}
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Name</th><th>Contact</th><th>Received</th></tr></thead>
+                <tbody>
+                {% for e in recent_enquiries %}
+                <tr>
+                    <td>{{ e.name }}</td>
+                    <td>{{ e.phone|default:e.email }}</td>
+                    <td>{{ e.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{% url 'management:enquiries' %}" class="btn-secondary">View All Enquiries</a>
+        {% else %}
+        <p class="muted">No open enquiries.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

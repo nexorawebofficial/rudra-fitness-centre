@@ -1,0 +1,39 @@
+{% extends 'management/base.html' %}
+{% load icons %}
+{% block title %}Enquiries{% endblock %}
+{% block page_title %}Enquiries{% endblock %}
+{% block content %}
+
+<div class="filter-bar">
+    <a href="?" class="btn-secondary {% if not show_resolved %}active{% endif %}">Open</a>
+    <a href="?resolved=1" class="btn-secondary {% if show_resolved %}active{% endif %}">All</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for e in enquiries %}
+        <tr>
+            <td>{{ e.name }}</td>
+            <td>{{ e.phone|default:"-" }}</td>
+            <td>{{ e.email }}</td>
+            <td>{{ e.message|truncatechars:60 }}</td>
+            <td>{{ e.created_at|date:"d M Y" }}</td>
+            <td><span class="status-pill {% if e.is_resolved %}active{% else %}pending{% endif %}">{{ e.is_resolved|yesno:"Resolved,Open" }}</span></td>
+            <td>
+                {% if not e.is_resolved %}
+                <form method="post" action="{% url 'management:resolve_enquiry' enquiry_id=e.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-secondary">{% icon 'check' %} Resolve</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No enquiries.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

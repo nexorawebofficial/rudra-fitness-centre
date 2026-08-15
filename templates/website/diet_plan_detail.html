@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}{{ plan.title }} - Diet & Nutrition - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <p class="muted"><a href="{% url 'diet_category_detail' slug=plan.category.slug %}">&larr; {{ plan.category.name }}</a></p>
+    <h1>{{ plan.title }}</h1>
+</section>
+<section class="content-section">
+    <div class="disclaimer-box">
+        {% icon 'shield-check' %}
+        <strong>Disclaimer:</strong> This is general nutrition guidance only and is not a substitute for advice
+        from a qualified doctor or registered dietitian &mdash; especially if you have a medical condition, are
+        pregnant, or are taking medication. RUDRA FITNESS does not diagnose or treat any disease.
+    </div>
+
+    <div class="diet-meal-grid">
+        {% if plan.breakfast %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'diet' %} Breakfast</h3>
+            <p>{{ plan.breakfast|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+        {% if plan.lunch %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'diet' %} Lunch</h3>
+            <p>{{ plan.lunch|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+        {% if plan.snack %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'diet' %} Snack</h3>
+            <p>{{ plan.snack|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+        {% if plan.dinner %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'diet' %} Dinner</h3>
+            <p>{{ plan.dinner|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="diet-meal-grid" style="margin-top: 1.25rem;">
+        {% if plan.foods_to_include %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'check' %} Foods to Include</h3>
+            <p>{{ plan.foods_to_include|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+        {% if plan.foods_to_limit %}
+        <div class="card diet-meal-card">
+            <h3>{% icon 'clock' %} Foods to Limit</h3>
+            <p>{{ plan.foods_to_limit|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if plan.hydration_notes %}
+    <div class="card" style="margin-top: 1.25rem;">
+        <h3>{% icon 'shield-check' %} Hydration Guidance</h3>
+        <p>{{ plan.hydration_notes|linebreaksbr }}</p>
+    </div>
+    {% endif %}
+
+    {% if plan.general_notes %}
+    <div class="card" style="margin-top: 1.25rem;">
+        <h3>{% icon 'trophy' %} General Notes</h3>
+        <p>{{ plan.general_notes|linebreaksbr }}</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

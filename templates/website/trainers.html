@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Trainers - RUDRA Fitness Centre{% endblock %}
+{% load icons %}
+{% block title %}Trainers - {{ site_settings.site_title }}{% endblock %}
 {% block content %}
 <section class="page-header">
     <h1>Meet Our Trainers</h1>
@@ -10,13 +11,19 @@
         {% for trainer in trainers %}
         <div class="card">
             {% if trainer.photo %}
-            <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="trainer-photo">
+            <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" loading="lazy" class="trainer-photo">
             {% endif %}
             <h3>{{ trainer.name }}</h3>
-            <p class="muted">{{ trainer.specialization }}</p>
-            <p>{{ trainer.experience_years }} years experience</p>
-            {% if trainer.phone %}<p>Contact: {{ trainer.phone }}</p>{% endif %}
+            <p class="muted">{{ trainer.specialty }}</p>
+            {% if trainer.qualification %}<p class="muted">{{ trainer.qualification }}</p>{% endif %}
+            <p>{% icon 'trophy' 'icon-inline' %} {{ trainer.experience_years }} years experience</p>
+            {% if trainer.category_list %}
+            <ul class="feature-list">
+                {% for category in trainer.category_list %}<li>{% icon 'dumbbell' 'icon-inline' %} {{ category }}</li>{% endfor %}
+            </ul>
+            {% endif %}
             {% if trainer.bio %}<p>{{ trainer.bio }}</p>{% endif %}
+            {% if trainer.phone %}<p>{% icon 'phone' 'icon-inline' %} <a href="tel:{{ trainer.phone }}">{{ trainer.phone }}</a></p>{% endif %}
         </div>
         {% endfor %}
     </div>

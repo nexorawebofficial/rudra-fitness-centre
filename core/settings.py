@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 import environ
 
@@ -19,6 +20,11 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
+# True when running `manage.py test`. Used to disable rate limiting (see
+# core/ratelimit.py) so the shared process-level cache doesn't cause tests
+# to fail each other across a long test run.
+TESTING = 'test' in sys.argv
+
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 # Render.com sets this automatically for the deployed service
@@ -35,11 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
 
     # Third party apps
 
     # Internal Apps
     'users',
+    'members',
+    'trainers',
+    'memberships',
+    'payments',
+    'attendance',
+    'diets',
+    'notifications',
     'website',
     'management_app',
 ]
@@ -68,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'website.context_processors.site_settings',
             ],
         },
     },
@@ -110,14 +125,26 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles' # For production
 
+# Hashed, cache-busted filenames only matter in production (and require a
+# `collectstatic` run first). In local dev/tests, serve static files directly
+# from STATICFILES_DIRS so nothing needs collectstatic to work.
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": (
+            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            if not DEBUG else
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+        ),
     },
 }
+
+# Belt-and-suspenders: if a static file is ever missing from the production
+# manifest (e.g. a forgotten `collectstatic` run), fall back to serving it
+# unhashed instead of a 500 error.
+WHITENOISE_MANIFEST_STRICT = False
 
 # 9. Media files (Photos the Boss uploads)
 MEDIA_URL = 'media/'
@@ -128,6 +155,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 10. Tell Django to use our Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'member_dashboard'
+LOGOUT_REDIRECT_URL = 'home'
+
+# Used for basic rate-limiting (see core/ratelimit.py). LocMemCache is
+# per-process; if you scale to multiple gunicorn workers in production,
+# point this at a shared cache (e.g. Redis) instead.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
 
 # 11. Security Settings for Production (These turn on when DEBUG=False)
 if not DEBUG:

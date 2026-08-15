@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}Diet & Nutrition - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Diet &amp; Nutrition</h1>
+</section>
+<section class="content-section">
+    <div class="disclaimer-box">
+        {% icon 'shield-check' %}
+        <strong>Disclaimer:</strong> The nutrition information on this website is general guidance only and is
+        not a substitute for advice from a qualified doctor or registered dietitian &mdash; especially if you have
+        a medical condition, are pregnant, or are taking medication. RUDRA FITNESS does not diagnose or treat any
+        disease. Please consult a healthcare professional before making significant changes to your diet.
+    </div>
+
+    {% if categories %}
+    <div class="card-grid">
+        {% for category in categories %}
+        <a href="{% url 'diet_category_detail' slug=category.slug %}" class="card diet-category-card">
+            <h3>{% icon 'diet' %} {{ category.name }}</h3>
+            {% if category.description %}<p>{{ category.description }}</p>{% endif %}
+            <p class="muted">
+                {% if category.published_plan_count %}
+                    {{ category.published_plan_count }} plan{{ category.published_plan_count|pluralize }} available
+                {% else %}
+                    Coming soon
+                {% endif %}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Our trainers will publish diet categories and sample plans here soon. Ask your trainer for personalized nutrition guidance in the meantime.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,46 +1,78 @@
-{% load static %}
+{% load static icons %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}RUDRA Fitness Centre{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.site_title }} - {{ site_settings.tagline }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site_settings.site_title }} is a premium gym for men and women offering expert trainers, modern equipment, flexible memberships and personalized diet guidance.{% endblock %}">
+
+    <meta property="og:title" content="{% block og_title %}{{ site_settings.site_title }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ site_settings.tagline }}{% endblock %}">
+    <meta property="og:type" content="website">
+    {% if site_settings.hero_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_settings.hero_image.url }}">{% endif %}
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <!-- PWA: installable "app" support -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#ff4d29">
-    <link rel="icon" href="{% static 'icons/icon-192.png' %}">
+    {% if site_settings.favicon %}
+        <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% else %}
+        <link rel="icon" href="{% static 'icons/icon-192.png' %}">
+    {% endif %}
     <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RUDRA">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <header class="site-header">
         <nav class="navbar">
             <a href="{% url 'home' %}" class="logo">
-                <svg class="logo-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
-                    <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
-                    <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
-                    <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
-                    <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
-                </svg>
-                <span class="logo-text">
-                    <span class="logo-name">RUDRA</span>
-                    <span class="logo-tagline">FITNESS CENTRE</span>
-                </span>
+                {% if site_settings.logo %}
+                    <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_title }}" class="logo-img">
+                {% else %}
+                    <svg class="logo-icon" viewBox="0 0 48 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                        <rect x="8" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                        <rect x="12" y="10" width="24" height="4" fill="currentColor"/>
+                        <rect x="36" y="5" width="4" height="14" rx="1" fill="currentColor"/>
+                        <rect x="42" y="8" width="6" height="8" rx="1" fill="currentColor"/>
+                    </svg>
+                    <span class="logo-text">
+                        <span class="logo-name">RUDRA</span>
+                        <span class="logo-tagline">FITNESS</span>
+                    </span>
+                {% endif %}
             </a>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'about' %}">About</a></li>
                 <li><a href="{% url 'trainers' %}">Trainers</a></li>
+                <li><a href="{% url 'equipment' %}">Equipment</a></li>
+                <li><a href="{% url 'diet_nutrition' %}">Diet &amp; Nutrition</a></li>
                 <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                <li><a href="{% url 'gallery' %}">Gallery</a></li>
+                <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
+                <li><a href="{% url 'faq' %}">FAQ</a></li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
-                <li><a href="{% url 'pricing' %}" class="btn-join">Join Now</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'member_dashboard' %}">My Dashboard</a></li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-join">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}" class="btn-join">Join Now</a></li>
+                {% endif %}
                 <li><button id="installBtn" type="button" class="btn-join" hidden>Install App</button></li>
             </ul>
         </nav>
@@ -61,27 +93,44 @@
     <footer class="site-footer">
         <div class="footer-content">
             <div>
-                <h3>RUDRA <span>Fitness Centre</span></h3>
-                <p>Your journey to a stronger you starts here.</p>
+                <h3>RUDRA <span>FITNESS</span></h3>
+                <p>{{ site_settings.tagline }}</p>
+                <ul class="social-links">
+                    {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener">{% icon 'instagram' %} Instagram</a></li>{% endif %}
+                    {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener">{% icon 'facebook' %} Facebook</a></li>{% endif %}
+                    {% if site_settings.youtube_url %}<li><a href="{{ site_settings.youtube_url }}" target="_blank" rel="noopener">{% icon 'youtube' %} YouTube</a></li>{% endif %}
+                    {% if site_settings.whatsapp_number %}<li><a href="https://wa.me/{{ site_settings.whatsapp_number }}" target="_blank" rel="noopener">{% icon 'whatsapp' %} WhatsApp</a></li>{% endif %}
+                </ul>
             </div>
             <div>
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="{% url 'trainers' %}">Trainers</a></li>
                     <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                    <li><a href="{% url 'gallery' %}">Gallery</a></li>
+                    <li><a href="{% url 'faq' %}">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'terms_and_conditions' %}">Terms &amp; Conditions</a></li>
                 </ul>
             </div>
             <div>
                 <h4>Contact</h4>
-                <p>Sakaldhia-Mugalsarai Highway, Tarajivanpur</p>
-                <p>+91 9118940464</p>
-                <p>+91 9170169747</p>
-                <p>info@rudrafitness.com</p>
+                {% if site_settings.address %}<p>{% icon 'location' %} {{ site_settings.address }}</p>{% endif %}
+                {% if site_settings.phone_primary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_primary }}">{{ site_settings.phone_primary }}</a></p>{% endif %}
+                {% if site_settings.phone_secondary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_secondary }}">{{ site_settings.phone_secondary }}</a></p>{% endif %}
+                {% if site_settings.email %}<p>{% icon 'mail' %} <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>{% endif %}
+                {% if site_settings.opening_hours %}<p>{% icon 'clock' %} {{ site_settings.opening_hours|linebreaksbr }}</p>{% endif %}
             </div>
         </div>
-        <p class="copyright">&copy; {% now "Y" %} RUDRA Fitness Centre. All rights reserved.</p>
+        <p class="copyright">&copy; {% now "Y" %} {{ site_settings.site_title }}. All rights reserved.</p>
     </footer>
 
+    <script src="{% static 'js/main.js' %}" defer></script>
     <script>
         document.getElementById('navToggle').addEventListener('click', function () {
             document.getElementById('navLinks').classList.toggle('open');
@@ -115,5 +164,6 @@
             installBtn.hidden = true;
         });
     </script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

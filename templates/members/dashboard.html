@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block title %}My Dashboard - {{ site_settings.site_title }}{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>Welcome, {{ profile.full_name|default:request.user.email }}</h1>
+    {% if profile %}<p class="muted">Member ID: <strong>{{ profile.member_id }}</strong></p>{% endif %}
+</section>
+<section class="content-section dashboard-section">
+    {% if not profile %}
+    <p class="empty-state">Your member profile could not be found. Please contact the front desk.</p>
+    {% else %}
+
+    {% if membership %}
+        {% if membership.status == 'active' %}
+            {% if membership.is_expired %}
+            <div class="status-card status-expired">
+                <h2>{% icon 'renew' %} EXPIRED</h2>
+                <p>Your {{ membership.plan.name }} membership expired on {{ membership.end_date }}.</p>
+                <span class="btn-secondary" aria-disabled="true">Renew Membership (coming soon)</span>
+            </div>
+            {% else %}
+            <div class="status-card status-active">
+                <h2>{% icon 'shield-check' %} ACTIVE</h2>
+                <p>{{ membership.days_remaining }} DAYS REMAINING &mdash; {{ membership.plan.name }}</p>
+                <p class="muted">Valid until {{ membership.end_date }}</p>
+            </div>
+            {% endif %}
+        {% elif membership.status == 'pending' %}
+            <div class="status-card status-pending">
+                <h2>{% icon 'clock' %} PAYMENT PENDING</h2>
+                <p>You selected the {{ membership.plan.name }} plan (&#8377;{{ membership.plan.price|floatformat:"-2" }}). Online payment is coming soon &mdash; our team will contact you to activate your membership.</p>
+            </div>
+        {% elif membership.status == 'cancelled' %}
+            <div class="status-card status-expired">
+                <h2>Membership Cancelled</h2>
+                <p>Contact us to reactivate your membership.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="status-card status-pending">
+            <h2>No Membership Yet</h2>
+            <p><a href="{% url 'pricing' %}">Choose a membership plan</a> to get started.</p>
+        </div>
+    {% endif %}
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card rudra-score-card">
+            <h3>{% icon 'trophy' %} RUDRA Score</h3>
+            <div class="rudra-score-ring" style="--score: {{ rudra_score }};">
+                <span>{{ rudra_score }}</span>
+            </div>
+            <p class="muted">A consistency indicator based on your recent attendance and membership status. It is not a fitness or medical assessment.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>{% icon 'members' %} Profile</h3>
+            <p><strong>Name:</strong> {{ profile.full_name }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+            <p><strong>Phone:</strong> {{ request.user.phone_number|default:"Not provided" }}</p>
+            <p><strong>Gender:</strong> {{ profile.get_gender_display }}</p>
+            {% if profile.preferred_training_time %}<p><strong>Preferred time:</strong> {{ profile.get_preferred_training_time_display }}</p>{% endif %}
+            {% if profile.fitness_goal %}<p><strong>Goal:</strong> {{ profile.fitness_goal }}</p>{% endif %}
+        </div>
+
+        <div class="dashboard-card">
+            <h3>{% icon 'calendar' %} Notifications</h3>
+            {% if notifications %}
+            <ul class="notification-list">
+                {% for note in notifications %}
+                <li class="{% if not note.is_read %}unread{% endif %}">
+                    <strong>{{ note.title }}</strong>
+                    <p>{{ note.message }}</p>
+                    <span class="muted">{{ note.created_at|date:"d M Y, h:i A" }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">No notifications yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dashboard-actions">
+        <a href="{% url 'membership_card' %}" class="btn-secondary">{% icon 'qr' %} Digital Membership Card</a>
+    </div>
+    <p class="muted dashboard-note">Diet plans and detailed attendance history will appear here soon.</p>
+    {% endif %}
+</section>
+{% endblock %}

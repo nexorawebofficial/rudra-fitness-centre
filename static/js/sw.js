@@ -1,14 +1,20 @@
-const CACHE_NAME = 'rudra-fitness-v1';
+const CACHE_NAME = 'rudra-fitness-v4';
 const OFFLINE_URL = '/offline/';
 
 const PRECACHE_URLS = [
   '/',
   '/about/',
   '/trainers/',
+  '/equipment/',
+  '/diet-nutrition/',
   '/pricing/',
+  '/gallery/',
+  '/testimonials/',
+  '/faq/',
   '/contact/',
   OFFLINE_URL,
   '/static/css/style.css',
+  '/static/js/main.js',
   '/static/manifest.json',
   '/static/icons/icon-192.png',
 ];

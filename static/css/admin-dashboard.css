@@ -1,0 +1,233 @@
+.admin-body { background: var(--color-bg); }
+
+.admin-shell { display: flex; min-height: 100vh; }
+
+.admin-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.admin-brand .logo-icon { width: 28px; height: 14px; color: var(--color-primary); }
+.admin-brand em { color: var(--color-primary); font-style: normal; }
+
+.admin-nav { display: flex; flex-direction: column; padding: 1rem 0.75rem; gap: 0.15rem; }
+
+.admin-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--radius);
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.admin-nav a:hover { background: var(--color-surface-alt); color: var(--color-text); }
+.admin-nav a.active { background: var(--color-primary-soft); color: var(--color-primary); }
+.admin-nav a .icon { width: 1.2em; height: 1.2em; }
+
+.admin-nav-divider {
+    margin: 0.75rem 0.5rem 0.25rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    opacity: 0.7;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.75rem;
+}
+
+.admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.admin-topbar h1 { font-size: 1.3rem; flex: 1; }
+
+.admin-menu-toggle { display: none; background: none; border: none; color: var(--color-text); font-size: 1.4rem; cursor: pointer; }
+
+.admin-content { padding: 1.75rem; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+/* Stat cards */
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-card .icon-badge { width: 44px; height: 44px; flex-shrink: 0; }
+.stat-card .stat-card-value { font-size: 1.7rem; font-weight: 800; color: var(--color-text); line-height: 1.1; }
+.stat-card .stat-card-label { color: var(--color-muted); font-size: 0.82rem; margin-top: 0.15rem; }
+.stat-card.accent .stat-card-value { color: var(--color-primary); }
+
+/* Panels */
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+}
+
+.panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.panel h3 { margin-bottom: 1.1rem; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+/* Bar charts (self-hosted, no chart library) */
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+    height: 160px;
+    padding-top: 1rem;
+}
+
+.chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.chart-bar-value { font-size: 0.72rem; color: var(--color-muted); margin-bottom: 0.3rem; }
+.chart-bar {
+    width: 100%;
+    max-width: 34px;
+    background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+    border-radius: 4px 4px 0 0;
+    min-height: 3px;
+    transition: height 0.4s ease;
+}
+.chart-bar-label { font-size: 0.72rem; color: var(--color-muted); margin-top: 0.4rem; }
+
+.plan-popularity-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.plan-popularity-row { display: flex; align-items: center; gap: 0.75rem; }
+.plan-popularity-row .plan-name { width: 120px; flex-shrink: 0; font-size: 0.85rem; color: var(--color-text); }
+.plan-popularity-track { flex: 1; background: var(--color-surface-alt); border-radius: 999px; height: 10px; overflow: hidden; }
+.plan-popularity-fill { height: 100%; background: var(--color-primary); border-radius: 999px; }
+.plan-popularity-count { width: 30px; text-align: right; font-size: 0.85rem; color: var(--color-muted); }
+
+/* Tables */
+.admin-table-wrap {
+    overflow-x: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    -webkit-overflow-scrolling: touch;
+}
+
+/* On narrow screens the table is wider than the viewport and scrolls
+   horizontally -- a bare overflow:auto container has no visual affordance on
+   touch, so spell it out explicitly below the table. */
+@media (max-width: 700px) {
+    .admin-table-wrap::after {
+        /* the first space after a CSS unicode escape is consumed as its
+           terminator, so a second space is needed to actually render one */
+        content: '\2194  swipe to see more columns';
+        display: block;
+        text-align: center;
+        font-size: 0.72rem;
+        color: var(--color-muted);
+        padding: 0.5rem 0;
+        border-top: 1px solid var(--color-border);
+    }
+}
+.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.admin-table th, .admin-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
+.admin-table th { color: var(--color-muted); font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: var(--color-surface-alt); }
+.admin-table a { color: var(--color-primary); font-weight: 600; }
+
+.status-pill { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.status-pill.active { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.status-pill.pending { background: rgba(250, 204, 21, 0.15); color: #facc15; }
+.status-pill.expired, .status-pill.cancelled { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+
+/* Filter bar */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; align-items: flex-end; }
+.filter-bar .form-group { margin-bottom: 0; min-width: 160px; }
+.filter-bar input, .filter-bar select {
+    padding: 0.6rem 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    font-family: inherit;
+}
+
+.pagination { display: flex; gap: 0.5rem; margin-top: 1.25rem; justify-content: center; }
+.pagination a, .pagination span {
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+}
+.pagination .current { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+
+.inline-form { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.inline-form input[type="number"], .inline-form input[type="text"] {
+    width: 100px;
+    padding: 0.5rem 0.65rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+}
+
+.btn-danger { background: transparent; border: 1px solid #f87171; color: #f87171; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-weight: 600; }
+.btn-danger:hover { background: rgba(248, 113, 113, 0.1); }
+
+@media (max-width: 900px) {
+    .admin-menu-toggle { display: block; }
+    .admin-sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        z-index: 50;
+        transition: left 0.2s ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+    }
+    .admin-sidebar.open { left: 0; }
+    .admin-content { padding: 1.1rem; }
+    .admin-topbar { padding: 1rem; }
+}
