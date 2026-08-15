@@ -1,4 +1,8 @@
+import os
+
+from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from .forms import ContactForm
@@ -35,3 +39,17 @@ def contact(request):
     else:
         form = ContactForm()
     return render(request, 'website/contact.html', {'form': form})
+
+
+def offline(request):
+    return render(request, 'website/offline.html')
+
+
+def service_worker(request):
+    sw_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
+    with open(sw_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    response = HttpResponse(content, content_type='application/javascript')
+    # Root scope so the service worker can control every page, not just /static/js/
+    response['Service-Worker-Allowed'] = '/'
+    return response

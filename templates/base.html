@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RUDRA Fitness Centre{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- PWA: installable "app" support -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ff4d29">
+    <link rel="icon" href="{% static 'icons/icon-192.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RUDRA">
 </head>
 <body>
     <header class="site-header">
@@ -31,6 +41,7 @@
                 <li><a href="{% url 'pricing' %}">Pricing</a></li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
                 <li><a href="{% url 'pricing' %}" class="btn-join">Join Now</a></li>
+                <li><button id="installBtn" type="button" class="btn-join" hidden>Install App</button></li>
             </ul>
         </nav>
     </header>
@@ -74,6 +85,34 @@
     <script>
         document.getElementById('navToggle').addEventListener('click', function () {
             document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        // PWA: register the service worker so the site works offline and can be installed
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+
+        // PWA: show a native "Install App" button when the browser allows it
+        let deferredInstallPrompt = null;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', function (event) {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            installBtn.hidden = false;
+        });
+
+        installBtn.addEventListener('click', function () {
+            if (!deferredInstallPrompt) return;
+            installBtn.hidden = true;
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt = null;
+        });
+
+        window.addEventListener('appinstalled', function () {
+            installBtn.hidden = true;
         });
     </script>
 </body>
