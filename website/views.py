@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Count, Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
 from diets.models import DietCategory, DietPlan
@@ -117,3 +117,29 @@ def service_worker(request):
     # Root scope so the service worker can control every page, not just /static/js/
     response['Service-Worker-Allowed'] = '/'
     return response
+
+
+def assetlinks(request):
+    """Digital Asset Links file that proves this domain owns the Android (TWA) app,
+    so Play Store's package opens full-screen with no browser address bar.
+
+    Fill in TWA_PACKAGE_NAME and TWA_SHA256_FINGERPRINT (from PWABuilder / your
+    Play signing key) once the Android package has been generated. Until then this
+    intentionally returns an empty list.
+    """
+    TWA_PACKAGE_NAME = ''  # e.g. "com.rudrafitness.app"
+    TWA_SHA256_FINGERPRINT = ''  # e.g. "14:6D:E9:83:C5:73..." from PWABuilder
+
+    if not TWA_PACKAGE_NAME or not TWA_SHA256_FINGERPRINT:
+        return JsonResponse([], safe=False)
+
+    return JsonResponse([
+        {
+            'relation': ['delegate_permission/common.handle_all_urls'],
+            'target': {
+                'namespace': 'android_app',
+                'package_name': TWA_PACKAGE_NAME,
+                'sha256_cert_fingerprints': [TWA_SHA256_FINGERPRINT],
+            },
+        },
+    ], safe=False)
