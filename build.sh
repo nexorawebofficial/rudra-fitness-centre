@@ -6,10 +6,12 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 python manage.py shell -c "
+import os
 from django.contrib.auth import get_user_model
 User = get_user_model()
-if not User.objects.filter(email='admin@rudrafitness.com').exists():
-    User.objects.create_superuser('admin@rudrafitness.com', 'GymAdmin@123')
+password = os.environ.get('ADMIN_PASSWORD')
+if password and not User.objects.filter(email='admin@rudrafitness.com').exists():
+    User.objects.create_superuser('admin@rudrafitness.com', password)
 "
 
 python manage.py shell -c "
