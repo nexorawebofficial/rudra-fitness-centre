@@ -6,13 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ site_settings.site_title }} - {{ site_settings.tagline }}{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ site_settings.site_title }} is a premium gym for men and women offering expert trainers, modern equipment, flexible memberships and personalized diet guidance.{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
 
     <meta property="og:title" content="{% block og_title %}{{ site_settings.site_title }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{{ site_settings.tagline }}{% endblock %}">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     {% if site_settings.hero_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_settings.hero_image.url }}">{% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% if local_business_schema_json %}
+    <script type="application/ld+json">{{ local_business_schema_json|safe }}</script>
+    {% endif %}
 
     <!-- PWA: installable "app" support -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
@@ -30,6 +41,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <header class="site-header">
         <nav class="navbar">
             <a href="{% url 'home' %}" class="logo">
@@ -49,17 +61,22 @@
                     </span>
                 {% endif %}
             </a>
-            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
                 <li><a href="{% url 'trainers' %}">Trainers</a></li>
-                <li><a href="{% url 'equipment' %}">Equipment</a></li>
-                <li><a href="{% url 'diet_nutrition' %}">Diet &amp; Nutrition</a></li>
                 <li><a href="{% url 'pricing' %}">Pricing</a></li>
                 <li><a href="{% url 'gallery' %}">Gallery</a></li>
-                <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-                <li><a href="{% url 'faq' %}">FAQ</a></li>
+                <li class="has-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" id="moreToggle" aria-expanded="false" aria-controls="moreMenu">More {% icon 'chevron-down' %}</button>
+                    <ul class="dropdown-menu" id="moreMenu">
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'equipment' %}">Equipment</a></li>
+                        <li><a href="{% url 'diet_nutrition' %}">Diet &amp; Nutrition</a></li>
+                        <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
+                        <li><a href="{% url 'faq' %}">FAQ</a></li>
+                    </ul>
+                </li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'member_dashboard' %}">My Dashboard</a></li>
@@ -86,9 +103,11 @@
     </div>
     {% endif %}
 
-    <main>
+    <main id="main-content">
         {% block content %}{% endblock %}
     </main>
+
+    <div class="made-by-badge">Made by Rudra Tiwari</div>
 
     <footer class="site-footer">
         <div class="footer-content">
@@ -120,11 +139,13 @@
             </div>
             <div>
                 <h4>Contact</h4>
+                <address>
                 {% if site_settings.address %}<p>{% icon 'location' %} {{ site_settings.address }}</p>{% endif %}
                 {% if site_settings.phone_primary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_primary }}">{{ site_settings.phone_primary }}</a></p>{% endif %}
                 {% if site_settings.phone_secondary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_secondary }}">{{ site_settings.phone_secondary }}</a></p>{% endif %}
                 {% if site_settings.email %}<p>{% icon 'mail' %} <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>{% endif %}
                 {% if site_settings.opening_hours %}<p>{% icon 'clock' %} {{ site_settings.opening_hours|linebreaksbr }}</p>{% endif %}
+                </address>
             </div>
         </div>
         <p class="copyright">&copy; {% now "Y" %} {{ site_settings.site_title }}. All rights reserved.</p>
@@ -132,9 +153,38 @@
 
     <script src="{% static 'js/main.js' %}" defer></script>
     <script>
-        document.getElementById('navToggle').addEventListener('click', function () {
-            document.getElementById('navLinks').classList.toggle('open');
-        });
+        (function () {
+            var navToggle = document.getElementById('navToggle');
+            var navLinks = document.getElementById('navLinks');
+            navToggle.addEventListener('click', function () {
+                var isOpen = navLinks.classList.toggle('open');
+                navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        })();
+
+        (function () {
+            var moreToggle = document.getElementById('moreToggle');
+            var dropdown = moreToggle.closest('.has-dropdown');
+
+            function closeDropdown() {
+                dropdown.classList.remove('open');
+                moreToggle.setAttribute('aria-expanded', 'false');
+            }
+
+            moreToggle.addEventListener('click', function (event) {
+                event.stopPropagation();
+                var isOpen = dropdown.classList.toggle('open');
+                moreToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target)) closeDropdown();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') closeDropdown();
+            });
+        })();
 
         // PWA: register the service worker so the site works offline and can be installed
         if ('serviceWorker' in navigator) {

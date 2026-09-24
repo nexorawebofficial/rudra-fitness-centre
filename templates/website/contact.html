@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load icons %}
 {% block title %}Contact - RUDRA Fitness Centre{% endblock %}
+{% block meta_description %}Get in touch with RUDRA Fitness Centre{% if site_settings.address %} in {{ site_settings.address }}{% endif %} — call, message us, or find directions to the gym.{% endblock %}
 {% block content %}
 <section class="page-header">
     <h1>Contact Us</h1>
@@ -7,12 +9,24 @@
 <section class="content-section contact-section">
     <div class="contact-info">
         <h3>Get in Touch</h3>
-        <p>Sakaldhia-Mugalsarai Highway, Tarajivanpur</p>
-        <p>+91 9118940464</p>
-        <p>+91 9170169747</p>
-        <p>info@rudrafitness.com</p>
-        <p>Mon - Sat: 6:00 AM - 10:00 PM</p>
-        <p>Owner: Prashant Misra</p>
+        <address>
+            {% if site_settings.address %}<p>{% icon 'location' %} {{ site_settings.address }}</p>{% endif %}
+            {% if site_settings.phone_primary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_primary }}">{{ site_settings.phone_primary }}</a></p>{% endif %}
+            {% if site_settings.phone_secondary %}<p>{% icon 'phone' %} <a href="tel:{{ site_settings.phone_secondary }}">{{ site_settings.phone_secondary }}</a></p>{% endif %}
+            {% if site_settings.email %}<p>{% icon 'mail' %} <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>{% endif %}
+            {% if site_settings.opening_hours %}<p>{% icon 'clock' %} {{ site_settings.opening_hours|linebreaksbr }}</p>{% endif %}
+        </address>
+
+        {% if site_settings.google_maps_embed_url %}
+        <div class="map-embed">
+            <iframe src="{{ site_settings.google_maps_embed_url }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="{{ site_settings.site_title }} location map"></iframe>
+        </div>
+        {% elif site_settings.address %}
+        <div class="map-embed">
+            <iframe src="https://www.google.com/maps?q={{ site_settings.address|urlencode }}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="{{ site_settings.site_title }} location map"></iframe>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query={{ site_settings.address|urlencode }}" target="_blank" rel="noopener" class="btn-secondary" style="margin-top: 1rem;">{% icon 'location' %} Get Directions</a>
+        {% endif %}
     </div>
     <form method="post" class="contact-form">
         {% csrf_token %}
@@ -20,7 +34,7 @@
         <div class="form-group">
             {{ field.label_tag }}
             {{ field }}
-            {% if field.errors %}<p class="field-error">{{ field.errors|striptags }}</p>{% endif %}
+            {% if field.errors %}<p class="field-error" role="alert">{{ field.errors|striptags }}</p>{% endif %}
         </div>
         {% endfor %}
         <button type="submit" class="btn-primary">Send Message</button>

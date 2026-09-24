@@ -10,10 +10,10 @@
         <h1>{{ site_settings.site_title|default:"RUDRA FITNESS" }}</h1>
         <p class="hero-tagline">{{ site_settings.tagline }}</p>
         <div class="hero-actions">
-            <a href="{% url 'pricing' %}" class="btn-primary">{% icon 'dumbbell' %} Join Now</a>
-            <a href="{% url 'pricing' %}" class="btn-secondary">{% icon 'card' %} View Memberships</a>
-            <a href="{% url 'contact' %}" class="btn-ghost">{% icon 'phone' %} Contact Us</a>
+            <a href="{% url 'contact' %}" class="btn-primary">{% icon 'phone' %} Enquire Now</a>
+            <a href="{% url 'pricing' %}" class="btn-secondary">{% icon 'card' %} View Membership Plans</a>
         </div>
+        {% if site_settings.address %}<p class="hero-location">{% icon 'location' %} {{ site_settings.address }}</p>{% endif %}
     </div>
 </section>
 

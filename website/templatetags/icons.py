@@ -33,6 +33,7 @@ _ICONS = {
     'diet': '<path d="M12 7c-1.7 0-3 1.6-3 4 0 4 2 8 3 8s3-4 3-8c0-2.4-1.3-4-3-4z"/><path d="M12 7c0-2 1-3.5 2.5-4" stroke-linecap="round"/>',
     'renew': '<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3" stroke-linecap="round"/>'
              '<path d="M18 4v4h-4M6 20v-4h4" stroke-linecap="round" stroke-linejoin="round"/>',
+    'chevron-down': '<path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>',
 }
 
 
